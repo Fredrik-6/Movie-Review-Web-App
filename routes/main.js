@@ -1,21 +1,38 @@
-// routes/main.js
-
-const express = require("express");
+// Import express
+const express = require('express');
 const router = express.Router();
 
-// Homepage
-router.get("/", function (req, res) {
-    res.render("index.ejs");
+// Homepage route
+router.get('/', function (req, res, next) {
+    res.render('index', {
+        appData: req.app.locals.appData,
+        session: req.session
+    });
 });
 
-// About page
-router.get("/about", function (req, res) {
-    res.render("about.ejs");
+// About route
+router.get('/about', function (req, res, next) {
+    res.render('about', {
+        appData: req.app.locals.appData,
+        session: req.session
+    });
 });
 
-// Search page
-router.get("/search", function (req, res) {
-    res.render("search.ejs");
+// Search route
+router.get('/search', function (req, res, next) {
+    res.render('search', {
+        appData: req.app.locals.appData,
+        session: req.session
+    });
 });
 
+// Add review route
+router.get('/review', function (req, res, next) {
+    res.render('review', {
+        appData: req.app.locals.appData,
+        session: req.session
+    });
+});
+
+// Export router
 module.exports = router;
