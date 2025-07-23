@@ -1,16 +1,11 @@
-<!doctype html>
-<html>
-  <head>
-    <title>Add book to <%=shopData.shopName%></title>
-    <link rel="stylesheet"  type="text/css" href="/main.css" />
-  </head>
-  <body>
-    <h1><%=shopData.shopName%>: Add book</h1>
-    <form method="POST" action="/bookadded">
-        <p>Book name: <input id="name" type="text" name="name" value="" /></p>
-        <p>Price: <input id="price" type="text" name="price" value="" /></p>
-        <input type="submit" value="Add Book" />
-      </form>
-  </body>
-</html>
+<% include partials/header %>
 
+<h2>Add a Movie Review</h2>
+
+<form action="/movies/reviewadded" method="post">
+  <label>Movie Title: <input type="text" name="title" required></label><br><br>
+  <label>Review: <textarea name="review" required></textarea></label><br><br>
+  <label>Rating (1–5): <input type="number" name="rating" min="1" max="5" required></label><br><br>
+  <label>Your Name: <input type="text" name="username" required></label><br><br>
+  <input type="submit" value="Submit Review">
+</form>

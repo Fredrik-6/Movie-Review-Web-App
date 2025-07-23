@@ -1,14 +1,22 @@
-const express = require("express");
-const router = express.Router();
+const express = require('express');
+const app = express();
+const path = require('path');
+require('dotenv').config();
 
-// Handle our routes
-router.get('/', function(req, res) {
-  res.render('index.ejs', { appData: { appName: 'MovieVerse' } });
+const mainRoutes = require('./routes/main');
+const movieRoutes = require('./routes/movies');
+
+// Middleware
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+app.use('/', mainRoutes);
+app.use('/movies', movieRoutes);
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`✅ Server running at http://localhost:${PORT}`);
 });
-
-router.get('/about', function(req, res) {
-  res.render('about.ejs', { appData: { appName: 'MovieVerse' } });
-});
-
-// Export the router object
-module.exports = router;
