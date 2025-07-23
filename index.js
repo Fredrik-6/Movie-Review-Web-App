@@ -55,8 +55,8 @@ const mainRoutes = require("./routes/main")
 app.use('/', mainRoutes)
 
 // Load the route handlers for /users
-const usersRoutes = require('./routes/users')
-app.use('/users', usersRoutes)
+const usersRoutes = require('./routes/users');
+app.use('/users', usersRoutes);
 
 // Load the route handlers for /movies
 const movieRoutes = require('./routes/movies');
@@ -64,3 +64,7 @@ app.use('/movies', movieRoutes)
 
 // Start the web app listening
 app.listen(port, () => console.log(`Node app listening on port ${port}!`))
+
+// Search route registry
+const searchRoutes = require("./routes/search");
+app.use("/search", searchRoutes);

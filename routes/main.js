@@ -19,19 +19,21 @@ router.get('/about', function (req, res, next) {
 });
 
 // Search route
-router.get('/search', function (req, res, next) {
+router.get('/search', function (req, res) {
     res.render('search', {
         appData: req.app.locals.appData,
-        session: req.session
+        session: req.session,
+        movie: null,
+        error: null
     });
 });
 
 // Add review route
-router.get('/review', function (req, res, next) {
-    res.render('review', {
-        appData: req.app.locals.appData,
-        session: req.session
-    });
+router.get('/review', (req, res, next) => {
+  res.render('review', {
+    appData: req.app.locals.appData,
+    session: req.session
+  });
 });
 
 // Export router

@@ -1,8 +1,19 @@
-<% include partials/header %>
+<%- include('partials/header') %>
 
 <h2>Search for Movie Reviews</h2>
 
-<form action="/movies/search_result" method="get">
-  <input type="text" name="search_text" placeholder="Enter movie title..." required>
+<form action="/search/results" method="get">
+  <input type="text" name="title" placeholder="Enter movie title" required />
   <button type="submit">Search</button>
 </form>
+
+<% if (movie) { %>
+  <h2><%= movie.Title %></h2>
+  <p><strong>Year:</strong> <%= movie.Year %></p>
+  <p><strong>Genre:</strong> <%= movie.Genre %></p>
+  <img src="<%= movie.Poster %>" alt="Poster">
+<% } %>
+
+<% if (error) { %>
+  <p><%= error %></p>
+<% } %>

@@ -12,9 +12,13 @@ router.get('/list', (req, res, next) => {
 });
 
 // Show form to add review
-router.get('/review', (req, res) => {
-  res.render("review.ejs");
+router.get('/review', function (req, res, next) {
+    res.render('review', {
+        appData: req.app.locals.appData,
+        session: req.session
+    });
 });
+
 
 // Handle form submission to add review
 router.post('/reviewadded', (req, res, next) => {
