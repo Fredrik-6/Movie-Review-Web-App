@@ -1,4 +1,5 @@
 🎬 Movie Review Web App
+
 This is a Node.js-based full-stack web application developed as part of the Databases and the Web module at Goldsmiths, University of London. The app allows users to register, log in, post and browse movie reviews, and search past games by teams, players, or location.
 
 📦 Tech Stack
