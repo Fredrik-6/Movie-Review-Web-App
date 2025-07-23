@@ -1,62 +1,44 @@
-const express = require("express")
-const router = express.Router()
+const express = require("express");
+const router = express.Router();
+const db = require('../db');
 
-router.get('/search',function(req, res, next){
-    res.render("search.ejs")
-})
+// Show all reviews
+router.get('/list', (req, res, next) => {
+  const sql = "SELECT * FROM reviews ORDER BY created_at DESC";
+  db.query(sql, (err, result) => {
+    if (err) return next(err);
+    res.render("movielist.ejs", { availableReviews: result });
+  });
+});
 
-router.get('/search_result', function (req, res, next) {
-    // Search the database
-    let sqlquery = "SELECT * FROM books WHERE name LIKE '%" + req.query.search_text + "%'" // query database to get all the books
-    // execute sql query
-    db.query(sqlquery, (err, result) => {
-        if (err) {
-            next(err)
-        }
-        res.render("list.ejs", {availableBooks:result})
-     }) 
-})
+// Show form to add review
+router.get('/review', (req, res) => {
+  res.render("review.ejs");
+});
 
+// Handle form submission to add review
+router.post('/reviewadded', (req, res, next) => {
+  const { title, review, rating, username } = req.body;
+  const sql = "INSERT INTO reviews (title, review, rating, username) VALUES (?, ?, ?, ?)";
+  db.query(sql, [title, review, rating, username], (err, result) => {
+    if (err) return next(err);
+    res.send(`✅ Review added: ${title} (${rating}/5) by ${username}`);
+  });
+});
 
-router.get('/list', function(req, res, next) {
-    let sqlquery = "SELECT * FROM books" // query database to get all the books
-    // execute sql query
-    db.query(sqlquery, (err, result) => {
-        if (err) {
-            next(err)
-        }
-        res.render("list.ejs", {availableBooks:result})
-     })
-})
+// Search form
+router.get('/search', (req, res) => {
+  res.render("search.ejs");
+});
 
-router.get('/addbook', function (req, res, next) {
-    res.render('addbook.ejs')
-})
+// Search results
+router.get('/search_result', (req, res, next) => {
+  const search = req.query.search_text;
+  const sql = "SELECT * FROM reviews WHERE title LIKE ?";
+  db.query(sql, [`%${search}%`], (err, result) => {
+    if (err) return next(err);
+    res.render("movielist.ejs", { availableReviews: result });
+  });
+});
 
-router.post('/bookadded', function (req, res, next) {
-    // saving data in database
-    let sqlquery = "INSERT INTO books (name, price) VALUES (?,?)"
-    // execute sql query
-    let newrecord = [req.body.name, req.body.price]
-    db.query(sqlquery, newrecord, (err, result) => {
-        if (err) {
-            next(err)
-        }
-        else
-            res.send(' This book is added to database, name: '+ req.body.name + ' price '+ req.body.price)
-    })
-}) 
-
-router.get('/bargainbooks', function(req, res, next) {
-    let sqlquery = "SELECT * FROM books WHERE price < 20"
-    db.query(sqlquery, (err, result) => {
-        if (err) {
-            next(err)
-        }
-        res.render("bargains.ejs", {availableBooks:result})
-    })
-}) 
-
-
-// Export the router object so index.js can access it
-module.exports = router
+module.exports = router;

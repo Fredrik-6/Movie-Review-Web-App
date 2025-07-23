@@ -8,7 +8,7 @@ var mysql = require('mysql2')
 
 // Create the express application object
 const app = express()
-const port = 8000
+const port = 3000
 
 // Tell Express that we want to use EJS as the templating engine
 app.set('view engine', 'ejs')
@@ -21,10 +21,10 @@ app.use(express.static(__dirname + '/public'))
 
 // Define the database connection
 const db = mysql.createConnection ({
-    host: 'localhost',
-    user: 'bettys_books_app',
-    password: 'qwertyuiop',
-    database: 'bettys_books'
+    host: '%',
+    user: 'Fredrik',
+    password: 'FRE18WXYZ@0603',
+    database: 'movieverse'
 })
 // Connect to the database
 db.connect((err) => {
@@ -36,7 +36,7 @@ db.connect((err) => {
 global.db = db
 
 // Define our application-specific data
-app.locals.shopData = {shopName: "Bettys Books"}
+app.locals.appData = {appName: "Movieverse"}
 
 // Load the route handlers
 const mainRoutes = require("./routes/main")
