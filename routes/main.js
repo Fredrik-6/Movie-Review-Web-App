@@ -1,22 +1,21 @@
-const express = require('express');
-const app = express();
-const path = require('path');
-require('dotenv').config();
+// routes/main.js
 
-const mainRoutes = require('./routes/main');
-const movieRoutes = require('./routes/movies');
+const express = require("express");
+const router = express.Router();
 
-// Middleware
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
-
-app.use('/', mainRoutes);
-app.use('/movies', movieRoutes);
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`✅ Server running at http://localhost:${PORT}`);
+// Homepage
+router.get("/", function (req, res) {
+    res.render("index.ejs");
 });
+
+// About page
+router.get("/about", function (req, res) {
+    res.render("about.ejs");
+});
+
+// Search page
+router.get("/search", function (req, res) {
+    res.render("search.ejs");
+});
+
+module.exports = router;
