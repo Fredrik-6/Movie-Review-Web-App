@@ -15,4 +15,10 @@
   <a href="/users/login">Login</a>
   <% } %>
 
+  <% if (session && session.userId) { %>
+  <p>Welcome, <%= session.userId %> | <a href="/users/logout">Logout</a></p>
+  <% } else { %>
+  <a href="/users/login">Login</a>
+  <% } %>
+
 </header>
