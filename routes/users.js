@@ -1,99 +1,85 @@
 const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcrypt");
-const saltRounds = 10;
+const saltRounds = 12;
+const db = require("../db");
 
-// Middleware for login redirect
+// Redirect if not logged in
 const redirectLogin = (req, res, next) => {
-    if (!req.session.userId) {
-        res.redirect('./login'); // redirect to login page
-    } else {
-        next(); // proceed to next handler
-    }
+  if (!req.session.userId) {
+    res.redirect('/users/login');
+  } else {
+    next();
+  }
 };
 
-// GET register form
-router.get('/register', function (req, res, next) {
-    res.render('register.ejs');
+// Register GET
+router.get("/register", (req, res) => {
+  res.render("register", {
+    session: req.session
+  });
 });
 
-// POST register form
-router.post('/registered', function (req, res, next) {
-    const plainPassword = req.body.password;
+// Register POST
+router.post("/registered", async (req, res, next) => {
+  const { username, email, password } = req.body;
 
-    bcrypt.hash(plainPassword, saltRounds, function (err, hashedPassword) {
-        if (err) {
-            return next(err);
+  if (!username || !email || !password) {
+    return res.send("Please fill all fields.");
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    const sql = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
+    db.query(sql, [username, email, hashedPassword], (err) => {
+      if (err) {
+        if (err.code === "ER_DUP_ENTRY") {
+          return res.send("Username or email already exists.");
         }
-
-        let result = 'Hello ' + req.body.first + ' ' + req.body.last +
-                     ', you are now registered! We will send an email to you at ' + req.body.email;
-        result += '<br>Your password is: ' + plainPassword + '<br>And your hashed password is: ' + hashedPassword;
-        
-        res.send(result);
+        return next(err);
+      }
+      res.send("✅ Registered successfully. <a href='/users/login'>Login here</a>");
     });
+  } catch (err) {
+    return next(err);
+  }
 });
 
-// Show register form
-router.get('/register', function (req, res, next) {
-    res.render('register', {
-        appData: req.app.locals.appData,
-        session: req.session
-    });
+// Login GET
+router.get("/login", (req, res) => {
+  res.render("login", {
+    session: req.session
+  });
 });
 
+// Login POST
+router.post("/loggedin", (req, res, next) => {
+  const { username, password } = req.body;
 
-// GET users list - protected route
-router.get('/list', redirectLogin, function (req, res, next) {
-    const sql = 'SELECT first, last, email FROM users';
-    db.query(sql, function (err, results) {
-        if (err) return next(err);
-        res.render('userlist.ejs', { users: results });
-    });
+  const sql = "SELECT * FROM users WHERE username = ? OR email = ?";
+  db.query(sql, [username, username], async (err, results) => {
+    if (err) return next(err);
+    if (results.length === 0) return res.send("User not found.");
+
+    const user = results[0];
+    const match = await bcrypt.compare(password, user.password);
+
+    if (match) {
+      req.session.userId = user.username;
+      res.send("✅ Login successful. <a href='/'>Go to home</a>");
+    } else {
+      res.send("❌ Incorrect password.");
+    }
+  });
 });
 
-router.get('/login', function (req, res, next) {
-    res.render('login.ejs', {
-        session: req.session
-    });
-});
-
-// POST login form
-router.post('/loggedin', function (req, res, next) {
-    const username = req.body.username;
-    const password = req.body.password;
-
-    const sql = 'SELECT password FROM users WHERE username = ? OR email = ?';
-    db.query(sql, [username, username], function (err, results) {
-        if (err) return next(err);
-
-        if (results.length === 0) {
-            res.send('Login failed: user not found.');
-        } else {
-            const hashedPassword = results[0].password;
-
-            bcrypt.compare(password, hashedPassword, function (err, result) {
-                if (err) return next(err);
-
-                if (result === true) {
-                    req.session.userId = req.body.username;
-                    res.send('Login successful! Welcome back.');
-                } else {
-                    res.send('Login failed: incorrect password.');
-                }
-            });
-        }
-    });
-});
-
-// GET logout route
-router.get('/logout', redirectLogin, (req, res) => {
-    req.session.destroy(err => {
-        if (err) {
-            return res.redirect('./');
-        }
-        res.send('You are now logged out. <a href="./">Home</a>');
-    });
+// Logout
+router.get("/logout", redirectLogin, (req, res) => {
+  req.session.destroy(err => {
+    if (err) return res.redirect("/");
+    res.send("You are now logged out. <a href='/'>Home</a>");
+  });
 });
 
 module.exports = router;

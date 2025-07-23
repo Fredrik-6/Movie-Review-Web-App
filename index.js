@@ -5,9 +5,6 @@ var ejs = require('ejs')
 //Import mysql module
 var mysql = require('mysql2')
 
-var session = require ('express-session')
-
-
 // Create the express application object
 const app = express()
 const port = 3000
@@ -19,13 +16,17 @@ app.set('view engine', 'ejs')
 app.use(express.urlencoded({ extended: true }))
 
 // Create a session
+const session = require('express-session');
+
 app.use(session({
-    secret: 'somerandomstuff',         // You can customise this
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        expires: 600000                // Session expires in 10 minutes
-    }
+  secret: 'somerandomstuff',       // You can replace this with an env variable
+  resave: false,
+  saveUninitialized: false,
+  cookie: { 
+    secure: false,      // ensures the cookie is only used over HTTPS (keep false when testing locally)
+    httpOnly: true,    // prevents client-side JavaScript from accessing the cookie
+    maxAge: 600000     // sets expiry to 10 minutes
+  }
 }));
 
 // Set up public folder (for css and statis js)

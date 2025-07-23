@@ -2,15 +2,21 @@
 <html>
   <head>
     <title>Register for <%=appData.appName%></title>
-  <link rel="stylesheet"  type="text/css" href="/main.css" />
+  <%- include('partials/header') %>
   </head>
+
+  <h2>Register</h2>
   <body>
-    <h1>Register for <%=appData.appName%></h1>
-    <form method="POST" action="registered">
-        <p>First name: <input id="first" type="text" name="first" /></p>
-        <p>Last name: <input id="last" type="text" name="last"/></p>
-        <p>Email: <input id="email" type="text" name="email"/></p>
-        <input type="submit" value="Register" />
-      </form>
-  </body>
-</html>
+     <link rel="stylesheet"  type="text/css" href="/main.css" />
+    <form action="/users/registered" method="post">
+  <label for="username">Username:</label><br>
+  <input type="text" id="username" name="username" required><br><br>
+
+  <label for="email">Email:</label><br>
+  <input type="email" id="email" name="email" required><br><br>
+
+  <label for="password">Password:</label><br>
+  <input type="password" id="password" name="password" required><br><br>
+
+  <button type="submit">Register</button>
+</form>
