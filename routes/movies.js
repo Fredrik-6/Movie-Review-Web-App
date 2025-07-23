@@ -2,14 +2,24 @@ const express = require("express");
 const router = express.Router();
 const db = require('../db');
 
-// Show all reviews
+// Redirect base /movies to the list route
+router.get('/', (req, res) => {
+  res.redirect('/movies/list');
+});
+
+
 router.get('/list', (req, res, next) => {
   const sql = "SELECT * FROM reviews ORDER BY created_at DESC";
   db.query(sql, (err, result) => {
     if (err) return next(err);
-    res.render("movielist.ejs", { availableReviews: result });
+    res.render("movielist.ejs", {
+      availableReviews: result,
+      appData: req.app.locals.appData,
+      session: req.session 
+    });
   });
 });
+
 
 // Show form to add review
 router.get('/review', function (req, res, next) {

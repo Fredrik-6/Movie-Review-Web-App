@@ -36,5 +36,10 @@ router.get('/review', (req, res, next) => {
   });
 });
 
+// Register shortcut route (redirects to users/register)
+router.get('/register', function (req, res, next) {
+  res.redirect('/users/register');
+});
+
 // Export router
 module.exports = router;
